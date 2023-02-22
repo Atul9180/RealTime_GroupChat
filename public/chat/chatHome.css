@@ -1,0 +1,343 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+body {
+  background-color: #3498db;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-image: linear-gradient(#cda2f1, #e9a5a5);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  height: 100vh;
+  margin: 0;
+  background: #7f7fd5;
+  background: -webkit-linear-gradient(to right, #91eae4, #86a8e7, #7f7fd5);
+  background: linear-gradient(to right, #91eae4, #86a8e7, #7f7fd5);
+}
+.container-fluid {
+  margin: auto;
+}
+.header {
+  padding: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#Applogo {
+  width: 70px;
+  height: 60px;
+  margin-left: 10px;
+  display: inline-block;
+}
+#logout-btn {
+  padding: 5px 13px;
+  margin-right: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  background: pink;
+  border-radius: 20px;
+  outline: none;
+  float: right;
+  box-shadow: 0px 4px 8px #888888;
+}
+#logout-btn:hover {
+  background: rgb(165, 45, 39);
+  color: white;
+  font-weight: bold;
+}
+#usersArea {
+  /* overflow: hidden; */
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  max-height: 220px;
+  position: relative;
+  border: inset;
+  font-family: monospace;
+}
+/* #usersArea:hover {
+  overflow-y: scroll;
+} */
+#usersArea::-webkit-scrollbar {
+  width: 8px;
+}
+#usersArea::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4;
+  border-radius: 10px;
+}
+
+.leftBox {
+  height: 87vh;
+}
+.creategroupHead {
+  margin-top: 11px;
+  margin-bottom: 6px;
+  position: relative;
+  padding: 6px;
+  color: rgb(6, 6, 38);
+  font-weight: bolder;
+  background: rgb(99, 196, 198);
+  text-align: center;
+  cursor: pointer;
+}
+.creategroupHead:hover {
+  background-color: #0a4539;
+  color: white;
+}
+.grps {
+  font-weight: bolder;
+  color: rgba(43, 43, 109, 0.911);
+}
+
+.chatGroupsInfo {
+  max-height: 162px;
+  position: relative;
+  font-family: comic-sans;
+  font-weight: bold;
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+#chatArea {
+  font-family: sans-serif;
+  position: relative;
+  height: 86vh;
+  padding: 15px;
+  border-left: 1px solid gray;
+}
+.Msgcontainer {
+  margin: auto;
+  background-color: #9690ea;
+  height: 76vh;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  padding: 0px 15px;
+  margin-bottom: 1px;
+  border-radius: 7px;
+  /* overflow: hidden; */
+  overflow-y: scroll;
+}
+/* .Msgcontainer:hover {
+  overflow-y: scroll;
+} */
+.Msgcontainer::-webkit-scrollbar {
+  width: 7px;
+}
+.Msgcontainer::-webkit-scrollbar-thumb {
+  background-color: #7269ec;
+  border-radius: 10px;
+}
+
+.message {
+  font-weight: bold;
+  margin: 14px 7px 0px 7px;
+  padding: 6px;
+  max-width: 80%;
+  border-radius: 10px;
+}
+.center {
+  display: block;
+  margin: auto;
+  text-align: center;
+  clear: both;
+  color: white;
+  font-weight: normal;
+  padding-top: 19px;
+  padding-bottom: 0px;
+}
+
+.left {
+  float: left;
+  clear: both;
+  background-color: #8ee1d0;
+  padding-left: 10px;
+  margin-bottom: -6px;
+}
+.right {
+  float: right;
+  clear: both;
+  background-color: #ebeb94;
+  padding-right: 10px;
+  margin-bottom: -6px;
+}
+.sendContainerInputBox {
+  display: flex;
+  box-sizing: border-box;
+  justify-content: center;
+  width: -webkit-fill-available;
+  vertical-align: -webkit-baseline-middle;
+}
+
+#messageInput {
+  width: 100%;
+  border: 2px solid grey;
+  border-radius: 0px 0px 0px 8px;
+  height: 36px;
+  padding: 0px 5px;
+}
+form#send-container {
+  width: 100%;
+}
+.sendItems {
+  display: flex;
+}
+.attachmenticon {
+  height: 35px;
+  cursor: pointer;
+  width: 60px;
+  background-color: #fafafa;
+  padding: 5px;
+  margin-left: 2px;
+}
+.sendbtnicon {
+  margin-left: 2px;
+  margin-right: 2px;
+  cursor: pointer;
+  height: 35px;
+  width: 82px;
+  border-radius: 0 0 5px;
+  background-color: #fafafa;
+  padding: 1px 2px;
+  text-align: center;
+}
+
+.adminBanner {
+  padding: 10px 0px;
+  border-radius: 7px;
+}
+.profile-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 40px;
+}
+.userProfile-image {
+  width: 33px;
+  height: 33px;
+  border-radius: 40px;
+  margin: 3px 0px;
+}
+.adminNameStatus {
+  margin: auto;
+  vertical-align: middle;
+  margin-left: 7px;
+}
+.adminName {
+  font-weight: bold;
+  font-size: 1.5rem;
+  vertical-align: middle;
+}
+.UserOnlinestatus {
+  padding-left: 15px;
+  color: blue;
+  font-family: comic-sans-cs;
+}
+.userSearch-box {
+  background: #fafafa;
+  padding: 0px 5px;
+  border-left: 3px solid grey;
+  border-right: 3px solid grey;
+  border-radius: 13px;
+  margin-bottom: 10px;
+}
+.userSearch-box input {
+  border: none;
+  border-radius: 13px;
+  width: 100%;
+  outline: none;
+  text-align: center;
+}
+.friend-drawer {
+  padding: 1px 7px;
+  height: 45px;
+  display: flex;
+  vertical-align: middle;
+  background: #88c1da;
+  transition: 0.3s ease;
+  border-radius: 25px 0 0 25px;
+  margin: 0px;
+  cursor: pointer;
+  border-bottom: ridge;
+}
+.friend-drawer .text {
+  margin: auto;
+  font-weight: bolder;
+  font-size: large;
+  line-height: 3;
+}
+.friend-drawer .text p {
+  margin: 0;
+}
+.text-muted {
+  --bs-text-opacity: 1;
+  color: #6c757d !important;
+}
+.small,
+small {
+  font-size: 0.875em;
+}
+button#Add_UsersToGrp {
+  border-radius: 5px;
+  padding: 2px 10px;
+  margin: 10px auto;
+  background: aquamarine;
+}
+div#add-members-popup {
+  padding: 14px 15px;
+  max-height: 220px;
+  /* display: flex; */
+  vertical-align: baseline;
+  background: #cfd9db;
+  transition: 0.3s ease;
+  border-radius: 15px;
+  margin-bottom: 2px;
+  cursor: pointer;
+  border-bottom: groove;
+}
+.member {
+  display: -webkit-box;
+  gap: 30px;
+}
+.groups-container {
+  width: 100%;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: inset;
+}
+.chatGroupsInfo:hover {
+  overflow-y: scroll;
+}
+.chatGroupsInfo::-webkit-scrollbar {
+  width: 8px;
+}
+.chatGroupsInfo::-webkit-scrollbar-thumb {
+  background-color: #c4c4c4;
+  border-radius: 10px;
+}
+
+.group {
+  vertical-align: middle;
+  cursor: pointer;
+  background: #88c1da;
+  border: inherit;
+}
+.group p {
+  line-height: 2.5;
+  padding: 0.1rem 0.4rem;
+  font-family: cursive;
+  font-weight: bolder;
+  margin-bottom: 0;
+}
+
+div#grpChatProfile {
+  font-size: x-large;
+  font-family: cursive;
+  font-weight: 670;
+  background: slateblue;
+}
+
+span.chatBoxNameStatus {
+  margin: auto 20px;
+  vertical-align: middle;
+}

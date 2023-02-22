@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./index.css">
+    <title>Group Chat</title>
+</head>
+
+<body>
+    <div class="hero">
+        <div class="form-box">
+            <div class="button-box">
+                <div id="btn"></div>
+                <button type="button" class="toggle-btn" onclick="loginForm()">Sign In</button>
+                <button type="button" class="toggle-btn" onclick="registerForm()">Sign Up</button>
+            </div>
+            <div class="social-icons">
+                <img src="https://img.icons8.com/color/2x/facebook-new.png" alt="fb">
+                <img src="https://img.icons8.com/color/2x/gmail-new.png" alt="gp">
+                <img src="https://img.icons8.com/color/2x/twitter.png" alt="tw">
+            </div>
+
+            <form id="login" class="input-group">
+                <input type="email" id="email-in" name="email" class="input-field" placeholder="Enter email" required />
+                <input type="password" id="password-in" name="pswd" class="input-field" placeholder="*********"
+                    required />
+                <button type="submit" id="sign-in-btn" class="submit-btn">Sign In</button>
+                <span id="forgetSpan"><a href="">Forgot your password?</a></span>
+            </form>
+
+            <form id="register" class="input-group">
+                <input type="text" class="input-field" id="name-up" name="name" placeholder="Enter fullname" required />
+                <input type="email" id="email-up" name="email" class="input-field" placeholder="Enter email" required />
+                <input type="text" id="phone-up" name="phone" class="input-field" placeholder="Phone Number" required />
+                <input type="password" id="password-up" name="password" class="input-field" placeholder="*********"
+                    required />
+                <button type="submit" id="sign-up-btn" class="submit-btn">Sign Up</button>
+            </form>
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+        let loginFormPosition = document.getElementById("login")
+        let registerFormPosition = document.getElementById("register")
+        let btn = document.getElementById("btn")
+        function loginForm() {
+            loginFormPosition.style.left = "50px";
+            registerFormPosition.style.left = "-450px";
+            btn.style.left = "0px";
+        }
+        function registerForm() {
+            loginFormPosition.style.left = "-450px";
+            registerFormPosition.style.left = "50px";
+            btn.style.left = "110px";
+        }
+    </script>
+    <script src="./index.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.2/axios.min.js"
+        integrity="sha512-NCiXRSV460cHD9ClGDrTbTaw0muWUBf/zB/yLzJavRsPNUl9ODkUVmUHsZtKu17XknhsGlmyVoJxLg/ZQQEeGA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- <script src="./axios.js"></script> -->
+</body>
+
+</html>

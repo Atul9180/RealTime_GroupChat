@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="./manage.css">
+    <!-- <link rel="stylesheet" href="../chat/chatHome.css"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+        integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+        integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/ef0c0d16c3.js" crossorigin="anonymous"></script>
+    <title>Group Chat App</title>
+</head>
+
+
+<body>
+    <div id="container">
+
+        <div class="manage-group col-12 col-md-7 center ">
+            <i id='back' class="fa-solid fa-arrow-left"></i>
+            <p class="info-header">Group info</p>
+            <img id='group-img' src="../Assets/default_icon.png" alt="">
+
+            <div class="brief">
+                <p class="group-name"></p>
+                <p class="group-info"></p>
+            </div>
+
+            <div class="group-participants"></div>
+
+            <div class="leave-group">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                <p>Exit Group</p>
+            </div>
+        </div>
+
+
+        <div class="add-participants">
+            <div class="options">
+                <i id='back-to-manage' class="fa-solid fa-arrow-left"></i>
+                <i id="next" class="fa-solid fa-check"></i>
+            </div>
+            <div class="add-members-popup"></div>
+        </div>
+
+
+    </div>
+
+    <!--Create Group Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Add Group Participants</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="createGroupForm">
+
+                        <div class="mb-3">
+                            <div id="addMembersPopup">
+                                <!-- <div>
+                                        <input type="checkbox" name="option1" id="1">
+                                        <label for="option1">At</label>
+                                    </div> -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" id="submitFormButton">Create</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="./manage.js"></script>
+
+</body>
+
+</html>
