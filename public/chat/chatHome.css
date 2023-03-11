@@ -19,9 +19,10 @@ body {
 }
 .container-fluid {
   margin: auto;
+  height: 100vh;
 }
 .header {
-  padding: 10px;
+  /* padding: 10px; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -52,7 +53,7 @@ body {
   /* overflow: hidden; */
   overflow-y: scroll;
   scroll-behavior: smooth;
-  max-height: 220px;
+  max-height: 30vh;
   position: relative;
   border: inset;
   font-family: monospace;
@@ -69,7 +70,7 @@ body {
 }
 
 .leftBox {
-  height: 87vh;
+  height: 88vh;
 }
 .creategroupHead {
   margin-top: 11px;
@@ -92,7 +93,7 @@ body {
 }
 
 .chatGroupsInfo {
-  max-height: 162px;
+  max-height: 34vh;
   position: relative;
   font-family: comic-sans;
   font-weight: bold;
@@ -102,18 +103,18 @@ body {
 #chatArea {
   font-family: sans-serif;
   position: relative;
-  height: 86vh;
-  padding: 15px;
+  height: 85vh;
+  padding: 0 15px;
   border-left: 1px solid gray;
 }
 .Msgcontainer {
   margin: auto;
   background-color: #9690ea;
-  height: 76vh;
+  height: 72vh;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding: 0px 15px;
   margin-bottom: 1px;
-  border-radius: 7px;
+  border-radius: 0 0 7px 7px;
   /* overflow: hidden; */
   overflow-y: scroll;
 }
@@ -158,8 +159,17 @@ body {
   clear: both;
   background-color: #ebeb94;
   padding-right: 10px;
+  margin-bottom: -9px;
+}
+.message h6 {
   margin-bottom: -6px;
 }
+.message p {
+  margin: 0;
+  padding: 0;
+  font-size: 1rem;
+}
+
 .sendContainerInputBox {
   display: flex;
   box-sizing: border-box;
@@ -202,19 +212,19 @@ form#send-container {
 }
 
 .adminBanner {
-  padding: 10px 0px;
-  border-radius: 7px;
+  padding: 0px 0px;
+  border-radius: 10px 10px 0 0;
 }
 .profile-image {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 40px;
 }
 .userProfile-image {
-  width: 33px;
-  height: 33px;
+  width: 30px;
+  height: 30px;
   border-radius: 40px;
-  margin: 3px 0px;
+  margin: 2px 0px;
 }
 .adminNameStatus {
   margin: auto;
@@ -247,22 +257,21 @@ form#send-container {
   text-align: center;
 }
 .friend-drawer {
-  padding: 1px 7px;
-  height: 45px;
+  padding: 0px 7px;
+  height: 35px;
   display: flex;
   vertical-align: middle;
   background: #88c1da;
   transition: 0.3s ease;
   border-radius: 25px 0 0 25px;
   margin: 0px;
-  cursor: pointer;
+  /* cursor: pointer; */
   border-bottom: ridge;
 }
 .friend-drawer .text {
   margin: auto;
   font-weight: bolder;
-  font-size: large;
-  line-height: 3;
+  /* font-size: large; */
 }
 .friend-drawer .text p {
   margin: 0;
@@ -334,7 +343,7 @@ div#grpChatProfile {
   font-size: x-large;
   font-family: cursive;
   font-weight: 670;
-  background: slateblue;
+  background: #8878ea;
 }
 
 span.chatBoxNameStatus {

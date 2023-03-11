@@ -88,19 +88,19 @@
             <!--Right Side ChatBox Area-->
             <div class="col-12 col-md-8 " id="chatArea">
                 <!-- Message Box Area -->
+                <div class="adminBanner grpChatProfile" id="grpChatProfile"></div>
                 <div class="Msgcontainer">
-                    <div class="adminBanner grpChatProfile sticky-top bg-gradient bg-light m-0 w-100 chat-desc"
-                        id="grpChatProfile">
-                        <!-- <img class="profile-image" src="../Assets/default_user_icon.png" alt="Profile img">
+                    <!-- <div class="adminBanner grpChatProfile sticky-top bg-gradient bg-light m-0 w-100 chat-desc"
+                        id="grpChatProfile"> -->
+                    <!-- <img class="profile-image" src="../Assets/default_user_icon.png" alt="Profile img">
                         <span id="ownerName" class="chatBoxNameStatus adminName material-icons">
                             Atul Patel
                         </span> -->
-                    </div>
+                    <!-- </div> -->
 
                 </div>
 
-
-                <!-- Msg send Input Box -->
+                <!-- Msg send Input Box  -->
                 <div class="col-xl-12 col-md-9 col-sm-12 sendContainerInputBox">
                     <div class="col-10 d-flex msgrow">
                         <form id="send-container" action="#">
@@ -156,20 +156,33 @@
     </div>
 
 
-
-
-
-
-
     </div>
     </div>
 
 
-
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <script src="../socket.io.js"></script> -->
     <script src="./chatHome.js"></script>
     <script src="../groups/groups.js"></script>
     <script src="../axios.js"></script>
 
+
+    <!-- <script>
+        function loadHTML(url, element) {
+            const xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    element.innerHTML = xhr.responseText;
+                }
+            };
+            xhr.open('GET', url);
+            xhr.send();
+        }
+
+        // Load the HTML files into each section on page load
+        loadHTML('GroupChat.html', document.getElementById('chatArea'));
+
+    </script> -->
 
 
 

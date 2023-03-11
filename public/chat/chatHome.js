@@ -1,13 +1,17 @@
+var username;
 var state, group;
-let allChatsAr;
-const userUrl = 'http://localhost:3000/users';
-const chatUrl = 'http://localhost:3000/chats';
+var allChatsAr = [];
+const serverIp = "http://localhost:3000";
+const userUrl = `${serverIp}/users`;
+const chatUrl = `${serverIp}/chats`;
 const logoutBtn = document.getElementById('logout-btn');
 const ownerName = document.getElementById('ownerName');
 let usersArea = document.getElementById('usersArea');
 let messageInp = document.getElementById('messageInput');
 const msgSendBtn = document.getElementById('sendbtnicon');
 const chatsContainer = document.querySelector(".Msgcontainer");
+const socket = io(`${serverIp}`);
+
 
 
 // Event Listeners
@@ -35,11 +39,14 @@ checkAuthState()
 async function logout() {
     await holdLimitedMsgs();
     sessionStorage.removeItem('auth');
+    sessionStorage.removeItem('groupId');
+    sessionStorage.removeItem('groupName');
+    localStorage.removeItem('allChats');
     checkAuthState();
 }
 
 
-let parsedToken = parseJwt(sessionStorage.getItem('auth'));
+
 //jwt token parser (parsedToken.email,parsedToken.name,parsedToken.userId)
 function parseJwt(token) {
     var base64Url = token.split('.')[1];
@@ -49,6 +56,8 @@ function parseJwt(token) {
     }).join(''));
     return JSON.parse(jsonPayload);
 }
+let parsedToken = parseJwt(sessionStorage.getItem('auth'));
+
 
 
 //@desc: showAllUsers List
@@ -87,20 +96,22 @@ async function msgsend(e) {
     e.preventDefault();
     let inputMessage = messageInp.value;
     try {
-
         if (inputMessage.trim().length == 0 || !parseInt(group)) {
             return;
         }
         else {
             const msgobj = {
+                userId: state.userId,
                 message: inputMessage,
                 name: `${parsedToken.name}`,
                 groupId: parseInt(group)
             }
+            showChatOnScreen(msgobj);
+            socket.emit('sending_group_message', msgobj);
             const sendResponse = await axios.post(`${chatUrl}/saveChatMsg`, msgobj, { headers: { 'Authorization': state.token } })
             if (sendResponse.data && Array.isArray(sendResponse.data) && sendResponse.data.length > 0) {
                 allChatsAr = [...allChatsAr, ...sendResponse.data]
-                showChatOnScreen(sendResponse.data)
+                // showChatOnScreen(sendResponse.data)
             }
         }
     }
@@ -113,6 +124,13 @@ async function msgsend(e) {
     }
 }
 
+
+
+//listen to other users new message :
+socket.on('ReceivedGrpMessage', (data) => {
+    if (data.groupId === parseInt(group))
+        showChatOnScreen(data);
+});
 
 
 
@@ -140,7 +158,7 @@ async function getAllChats() {
         }
         else {
             allChatsAr.forEach(chat => showChatOnScreen(chat));
-            await findOtherUsersChat();
+            // await findOtherUsersChat();
         }
     }
     catch (err) {
@@ -150,34 +168,48 @@ async function getAllChats() {
 
 
 //@desc: load otherusers send chats
-async function findOtherUsersChat() {
-    try {
-        const id = allChatsAr[allChatsAr.length - 1].id;
-        const isNewChat = await axios.get(`${chatUrl}/getnewChats`, {
-            params: { id, groupId: group }, headers: { 'Authorization': state.token }
-        });
-        if (isNewChat.data.length > 0) {
-            allChatsAr = [...allChatsAr, ...isNewChat.data]
-            return isNewChat.data.map(chat => { showChatOnScreen(chat) });
-        }
-    }
-    catch (err) {
-        console.log(err);
-    }
-}
+// async function findOtherUsersChat() {
+//     try {
+//         const id = allChatsAr[allChatsAr.length - 1].id;
+//         const isNewChat = await axios.get(`${chatUrl}/getnewChats`, {
+//             params: { id, groupId: group }, headers: { 'Authorization': state.token }
+//         });
+//         if (isNewChat.data.length > 0) {
+//             allChatsAr = [...allChatsAr, ...isNewChat.data]
+//             return isNewChat.data.map(chat => { showChatOnScreen(chat) });
+//         }
+//     }
+//     catch (err) {
+//         console.log(err);
+//     }
+// }
 
 
 
 //desc: to showChatsOnScreen
-async function showChatOnScreen(chat) {
-    try {
-        const { id, userId, name, message } = chat;
-        //console.table({userId,id, name, message});
-        const div = document.createElement("div");
-        div.className = state.userId === userId ? "message right" : "message left";
-        div.textContent = state.userId === userId ? `You: ${message}` : `${name}: ${message}`;
-        chatsContainer.appendChild(div);
+// async function showChatOnScreen(chat) {
+//     try {
+//         const { id, userId, name, message } = chat;
+//         //console.table({userId,id, name, message});
+//         const div = document.createElement("div");
+//         div.className = state.userId === userId ? "message right" : "message left";
+//         div.textContent = state.userId === userId ? `You: ${message}` : `${name}: ${message}`;
+//         chatsContainer.appendChild(div);
+//         scrollDown();
+//     }
+//     catch (err) {
+//         console.error(err)
+//     }
+// }
 
+async function showChatOnScreen(data) {
+    try {
+        let div = document.createElement('div');
+        // div.classList.add('message', status);
+        div.className = state.userId === data.userId ? "message right" : "message left";
+        let content = status === 'right' ? `<h6>You:</h6><p>${data.message}</p>` : `<h6>${data.name}:</h6><p>${data.message}</p>`;
+        div.innerHTML += content;
+        chatsContainer.appendChild(div);
         scrollDown();
     }
     catch (err) {
@@ -187,10 +219,11 @@ async function showChatOnScreen(chat) {
 
 
 
+
 //@desc: setting chatbox Profile header(name,image)
 async function setGroupChatHeader() {
     try {
-        let header = document.querySelector('.grpChatProfile');
+        let header = document.querySelector('#grpChatProfile');
         header.setAttribute('groupId', sessionStorage.getItem('groupId'));
         header.classList.add('group', 'sticky-top')
         let grpImg = document.createElement('img');
@@ -202,6 +235,7 @@ async function setGroupChatHeader() {
         grpname.classList = 'chatBoxNameStatus';
         grpname.setAttribute('name', sessionStorage.getItem('groupName'));
         header.appendChild(grpname);
+        // Msgcontainer.appendChild(header);
         header.addEventListener('click', manageGroup);
     }
     catch (err) {
@@ -214,8 +248,6 @@ async function setGroupChatHeader() {
 
 //@desc: logic to show Group Profile info..
 function manageGroup(e) {
-    //console.log(e.target.id)
-    //console.log(e.target.getAttribute('groupid'))
     location.href = '../manageGroup/manage.html'
 }
 
@@ -236,7 +268,7 @@ async function holdLimitedMsgs() {
 
 
 
-//@desc: showChat data once group seleccted, Called from groups.js
+//@desc: showChat data once group selected, Called from groups.js
 async function SetGrpChats(e) {
     let clickedElement = e.target;
     while (clickedElement && !clickedElement.classList.contains('group')) {
@@ -251,8 +283,7 @@ async function SetGrpChats(e) {
         sessionStorage.setItem('groupName', groupName)
         localStorage.removeItem('allChats')
         if (sessionStorage.getItem('groupId') && sessionStorage.getItem('groupName')) {
-            await setGroupChatHeader();
-            await getAllChats();
+            Promise.all([setGroupChatHeader(), getAllChats()]);
             location.href = '../chat/chatHome.html';
         }
     }
@@ -263,10 +294,8 @@ async function SetGrpChats(e) {
 //@desc: onLoad Methods
 window.addEventListener('DOMContentLoaded', async () => {
     ownerName.innerText = `${parsedToken.name}`;
-    await showAddedMembers();
-    await getAllChats();
-    await setGroupChatHeader();
-    setInterval(findOtherUsersChat, 1000);
+    Promise.all([showAddedMembers(), getAllChats(), setGroupChatHeader()])
+    //setInterval(findOtherUsersChat, 1000);
 });
 
 

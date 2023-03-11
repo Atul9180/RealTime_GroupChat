@@ -1,6 +1,7 @@
 var state;
-let groupsIp = 'http://localhost:3000/groups'
-let userIp = 'http://localhost:3000/users'
+const serverIp = 'http://localhost:3000';
+let groupsIp = `${serverIp}/groups`;
+let userIp = `${serverIp}/users`;
 
 
 let CreateGroupModelPop = document.getElementById("createGroupModelAndGetUsers");
