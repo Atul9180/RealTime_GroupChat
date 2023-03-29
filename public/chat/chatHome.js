@@ -1,6 +1,3 @@
-var username;
-var state, group;
-var allChatsAr = [];
 const serverIp = "http://localhost:3000";
 const userUrl = `${serverIp}/users`;
 const chatUrl = `${serverIp}/chats`;
@@ -8,18 +5,26 @@ const logoutBtn = document.getElementById('logout-btn');
 const ownerName = document.getElementById('ownerName');
 let usersArea = document.getElementById('usersArea');
 let messageInp = document.getElementById('messageInput');
+const input = document.getElementById('image');
 const msgSendBtn = document.getElementById('sendbtnicon');
 const chatsContainer = document.querySelector(".Msgcontainer");
 const socket = io(`${serverIp}`);
+let username;
+let state, group;
+let allChatsAr = [];
 
 
 
-// Event Listeners
+//@desc: Event Listeners
 logoutBtn.addEventListener('click', logout);
 msgSendBtn.addEventListener('click', msgsend);
+messageInp.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        msgsend(e);
+    }
+})
 
-
-//user token authentication
+//@desc: user token authentication
 async function checkAuthState() {
     state = await JSON.parse(sessionStorage.getItem('auth'))
     group = sessionStorage.getItem('groupId')
@@ -57,6 +62,7 @@ function parseJwt(token) {
     return JSON.parse(jsonPayload);
 }
 let parsedToken = parseJwt(sessionStorage.getItem('auth'));
+const userobj = { name: parsedToken.name, id: parsedToken.userId }
 
 
 
@@ -65,22 +71,25 @@ async function showAddedMembers() {
     try {
         const response = await axios.get(`${userUrl}/getAllUsers`, { headers: { 'Authorization': state.token } })
         if (response) {
-            response.data.map(user => {
-                if (user.id !== state.userId) {
-                    const html = `
+
+            socket.on('user-list', (userList) => {
+                response.data.map(user => {
+                    if (user.id !== state.userId) {
+                        let isUserOnline = userList.includes(user.id) == 1 ? 'Online' : 'Offline';
+                        const html = `
                 <div class="singleUserChat friend-drawer friend-drawer--onhover" id='${user.id}' name='${user.name}'>
 		  <img class="userProfile-image" src="../Assets/default_user_icon.png" alt="">
 		  <div class="text">
-			<span >${user.name}</span>
+			<span >${user.name}</span> <span class="onlnestatus">${isUserOnline}</span>
 			<!-- <p class="text-muted">Hey, you're </p> -->
 		  </div>
 		  <!-- <span class="time text-muted small">13:21</span> -->
-		</div>
-                `
-                    usersArea.innerHTML += html;
-                }
-            })
-            // usersArea.addEventListener('click', setSingleUserChatBox);
+		</div>`
+                        usersArea.innerHTML += html;
+                    }
+                    // usersArea.addEventListener('click', setSingleUserChatBox);
+                })
+            });
         }
     }
     catch (error) {
@@ -94,42 +103,65 @@ async function showAddedMembers() {
 //@desc: sending msg method:
 async function msgsend(e) {
     e.preventDefault();
-    let inputMessage = messageInp.value;
+    const inputMessage = messageInp.value;
+    const files = input.files;
+
+    if (inputMessage === '' && !files.length || !parseInt(group)) { return; }
+
+    let msgobj = {
+        userId: state.userId,
+        name: `${parsedToken.name}`,
+        groupId: parseInt(group)
+    };
+
     try {
-        if (inputMessage.trim().length == 0 || !parseInt(group)) {
-            return;
-        }
-        else {
-            const msgobj = {
-                userId: state.userId,
-                message: inputMessage,
-                name: `${parsedToken.name}`,
-                groupId: parseInt(group)
+        if (files.length > 0) {
+            document.querySelector("#attachmenticon").style.backgroundColor = "green";
+            document.getElementById('messageInput').readOnly = true;
+            const file = files[0];
+            const formData = new FormData();
+            formData.append('image', file);
+            const response = await axios.post(`${chatUrl}/upload`, formData, {
+                headers: {
+                    'Authorization': state.token,
+                    'Content-Type': 'multipart/form-data'
+                },
+                params: { groupId: parseInt(group) }
+            });
+
+            if (response && response.data) {
+                document.getElementById('messageInput').readOnly = false;
+                document.querySelector("#attachmenticon").style.backgroundColor = "#fafafa";
+                msgobj.message = response.data.message;
+                allChatsAr.push(response.data);
+            } else {
+                throw new Error('Error uploading file');
             }
-            showChatOnScreen(msgobj);
-            socket.emit('sending_group_message', msgobj);
+        } else if (inputMessage.length > 0) {
+            msgobj.message = inputMessage;
             const sendResponse = await axios.post(`${chatUrl}/saveChatMsg`, msgobj, { headers: { 'Authorization': state.token } })
-            if (sendResponse.data && Array.isArray(sendResponse.data) && sendResponse.data.length > 0) {
-                allChatsAr = [...allChatsAr, ...sendResponse.data]
-                // showChatOnScreen(sendResponse.data)
-            }
+            allChatsAr.push(sendResponse.data)
         }
-    }
-    catch (err) {
-        console.log("error encountered in sending msg: ", err);
+
+        showChatOnScreen(msgobj);
+        socket.emit('sending_group_message', msgobj);
+        localStorage.setItem('allChats', JSON.stringify(allChatsAr));
+    } catch (err) {
+        console.error("Error encountered in sending message: ", err);
         throw err;
-    }
-    finally {
+    } finally {
         messageInp.value = "";
+        input.value = null;
     }
 }
 
 
-
-//listen to other users new message :
+//@desc: listen to other users new message :
 socket.on('ReceivedGrpMessage', (data) => {
     if (data.groupId === parseInt(group))
         showChatOnScreen(data);
+    allChatsAr.push(data)
+    localStorage.setItem('allChats', JSON.stringify(allChatsAr))
 });
 
 
@@ -158,7 +190,6 @@ async function getAllChats() {
         }
         else {
             allChatsAr.forEach(chat => showChatOnScreen(chat));
-            // await findOtherUsersChat();
         }
     }
     catch (err) {
@@ -167,47 +198,24 @@ async function getAllChats() {
 }
 
 
-//@desc: load otherusers send chats
-// async function findOtherUsersChat() {
-//     try {
-//         const id = allChatsAr[allChatsAr.length - 1].id;
-//         const isNewChat = await axios.get(`${chatUrl}/getnewChats`, {
-//             params: { id, groupId: group }, headers: { 'Authorization': state.token }
-//         });
-//         if (isNewChat.data.length > 0) {
-//             allChatsAr = [...allChatsAr, ...isNewChat.data]
-//             return isNewChat.data.map(chat => { showChatOnScreen(chat) });
-//         }
-//     }
-//     catch (err) {
-//         console.log(err);
-//     }
-// }
-
-
-
-//desc: to showChatsOnScreen
-// async function showChatOnScreen(chat) {
-//     try {
-//         const { id, userId, name, message } = chat;
-//         //console.table({userId,id, name, message});
-//         const div = document.createElement("div");
-//         div.className = state.userId === userId ? "message right" : "message left";
-//         div.textContent = state.userId === userId ? `You: ${message}` : `${name}: ${message}`;
-//         chatsContainer.appendChild(div);
-//         scrollDown();
-//     }
-//     catch (err) {
-//         console.error(err)
-//     }
-// }
-
+//desc: display messages on screen
 async function showChatOnScreen(data) {
     try {
         let div = document.createElement('div');
-        // div.classList.add('message', status);
         div.className = state.userId === data.userId ? "message right" : "message left";
-        let content = status === 'right' ? `<h6>You:</h6><p>${data.message}</p>` : `<h6>${data.name}:</h6><p>${data.message}</p>`;
+        let content = "";
+        if (data.message.startsWith("https://")) {
+            // const imgtag = `<p><img data-src="${data.message}"  class="lozad attachmentsImages" id='${data.message}' style="width:70px; height:70px;" onclick="window.open('${data.message}', '_blank')" title="Click to download" /></p>`;
+            const imgtag = `<p><img src="${data.message}"  class="attachmentsImages" loading="lazy"  id='${data.message}' style="width:70px; height:70px;" onclick="window.open('${data.message}', '_blank')" title="Click to download" /></p>`;
+            content = div.className === "message right" ?
+                `<h6>You:</h6>${imgtag}` :
+                `<h6>${data.name}:</h6>${imgtag}`;
+        }
+        else {
+            content = div.className === "message right" ?
+                `<h6>You:</h6><p>${data.message}</p>` :
+                `<h6>${data.name}:</h6><p>${data.message}</p>`;
+        }
         div.innerHTML += content;
         chatsContainer.appendChild(div);
         scrollDown();
@@ -216,6 +224,7 @@ async function showChatOnScreen(data) {
         console.error(err)
     }
 }
+
 
 
 
@@ -277,10 +286,9 @@ async function SetGrpChats(e) {
     if (clickedElement) {
         const groupId = clickedElement.id;
         const groupName = clickedElement.getAttribute('name');
-        // console.log({ groupName, groupId })
-        chatsContainer.innerHTML = "";
         sessionStorage.setItem('groupId', groupId)
         sessionStorage.setItem('groupName', groupName)
+        chatsContainer.innerHTML = "";
         localStorage.removeItem('allChats')
         if (sessionStorage.getItem('groupId') && sessionStorage.getItem('groupName')) {
             Promise.all([setGroupChatHeader(), getAllChats()]);
@@ -295,7 +303,7 @@ async function SetGrpChats(e) {
 window.addEventListener('DOMContentLoaded', async () => {
     ownerName.innerText = `${parsedToken.name}`;
     Promise.all([showAddedMembers(), getAllChats(), setGroupChatHeader()])
-    //setInterval(findOtherUsersChat, 1000);
+    socket.emit("login", userobj);
 });
 
 

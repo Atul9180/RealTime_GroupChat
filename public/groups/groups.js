@@ -1,7 +1,6 @@
-var state;
-const serverIp = 'http://localhost:3000';
-let groupsIp = `${serverIp}/groups`;
-let userIp = `${serverIp}/users`;
+const server = 'http://localhost:3000';
+let groupsIp = `${server}/groups`;
+let userIp = `${server}/users`;
 
 
 let CreateGroupModelPop = document.getElementById("createGroupModelAndGetUsers");
@@ -18,11 +17,12 @@ CreateGroupModelPop.addEventListener('click', showMembersToAddInGroup)
 
 
 //@desc: User already logged in check..
+let statee;
 async function checkAuthState() {
-    state = await JSON.parse(sessionStorage.getItem('auth'))
-    if (state == null || state == undefined || state == '') {
+    statee = await JSON.parse(sessionStorage.getItem('auth'))
+    if (statee == null || statee == undefined || statee == '') {
         location.replace('../index.html')
-    } else if (state.token) {
+    } else if (statee.token) {
         return
     } else {
         location.replace('../index.html')
@@ -56,11 +56,11 @@ modal.addEventListener('hidden.bs.modal', () => {
 //@desc: createGroup Model popup: Load With non-member Users list:
 async function showMembersToAddInGroup() {
     try {
-        const response = await axios.get(`${userIp}/getAllUsers`, { headers: { 'Authorization': state.token } })
+        const response = await axios.get(`${userIp}/getAllUsers`, { headers: { 'Authorization': statee.token } })
         if (response) {
             addMembersPopup.innerHTML = "";
             response.data.map(user => {
-                if (user.id !== state.userId) {
+                if (user.id !== statee.userId) {
                     let div = document.createElement('div');
                     div.className = 'member';
                     div.id = `option${user.id}`;
@@ -113,7 +113,7 @@ createGroupForm.addEventListener('submit', async (event) => {
 //@desc: save and create new group
 async function createGroup(data) {
     try {
-        const response = await axios.post(`${groupsIp}`, data, { headers: { 'Authorization': state.token } });
+        const response = await axios.post(`${groupsIp}`, data, { headers: { 'Authorization': statee.token } });
         if (response.status == 201) {
             alert("New Group Created!");
             //document.getElementById('staticBackdrop').classList.remove('show');
@@ -137,7 +137,7 @@ async function createGroup(data) {
 //SetGrpChats: definition inside chatHome.js
 async function showGroups() {
     try {
-        const response = await axios.get(`${groupsIp}`, { headers: { 'Authorization': state.token } })
+        const response = await axios.get(`${groupsIp}`, { headers: { 'Authorization': statee.token } })
         let groupList = document.querySelector('.groups-container')
         groupList.innerHTML = "";
         if (response.data.length == 0) {

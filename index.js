@@ -1,16 +1,19 @@
 require('dotenv').config();
 const express = require('express')
-const bodyParser = require('body-parser')
 const cors = require('cors');
 const app = express();
 const sequelize = require('./util/database')
 const server = require("http").createServer(app);
 const { setupSocketServer } = require('./util/socket');
-const path = require('path')
-const helmet = require('helmet')
+const { job } = require('./services/cronJob');
+const path = require('path');
+const helmet = require('helmet');
+app.use(helmet);
+
+
+
+
 setupSocketServer(server);
-
-
 const userRoutes = require('./routes/userRoute')
 const chatRoutes = require('./routes/chatRoute')
 const groupsRoutes = require('./routes/groupsRoute')
@@ -21,16 +24,16 @@ const Groups = require('./models/groupsModel')
 
 
 app.use(cors({
-    origin: "*",
+    origin: "http://localhost:3000",
     credentials: true
 }));
 
 
 //@desc: Middlewares-
 app.use(express.json())
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '/public')));
-app.use(helmet())
+
 
 
 //@desc: routes-
@@ -52,11 +55,13 @@ Groups.hasMany(Chats)
 Chats.belongsTo(Groups)
 
 
+//@desc: cron job:
+job.start();
+
 
 sequelize
     // .sync({ force: true })
     .sync()
     .then(() => {
-        //console.log(response)
         server.listen(process.env.PORT, () => console.log("Server started running on Port: 3000"))
     }).catch(err => console.log(err))

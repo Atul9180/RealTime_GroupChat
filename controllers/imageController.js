@@ -1,61 +1,63 @@
-const AWS = require("aws-sdk");
-let multer = require("multer");
+const Chats = require('../models/chatsModel');
+const multer = require('multer');
+const AWS = require('aws-sdk');
 
-const bucketName = process.env.BUCKET;
-
-const awsConfig = {
-    accessKeyId: process.env.ACCESSKEYID,
-    secretAccessKey: process.env.SECRETKEYID
-};
-
-const S3 = new AWS.S3(awsConfig);
-
-
-
-//Specify the multer config
-let upload = multer({
-    // storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 1024 * 1024 * 5,
-    },
-    fileFilter: function (req, file, done) {
-        if (
-            file.mimetype === "image/jpeg" ||
-            file.mimetype === "image/png" ||
-            file.mimetype === "image/jpg"
-        ) {
-            done(null, true);
-        } else {
-            //prevent the upload
-            var newError = new Error("File type is incorrect");
-            newError.name = "MulterError";
-            done(newError, false);
-        }
-    },
+const s3 = new AWS.S3({
+    accessKeyId: process.env.IAM_USER_ACCESS,
+    secretAccessKey: process.env.IAM_USER_SECRET
 });
 
+// Multer for handling 
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB file size limit
+    }
+}).single('image');
 
 
 
-//upload to s3
-const uploadToS3 = (fileData) => {
-    return new Promise((resolve, reject) => {
+//@desc: upload single image
+const uploadImage = async (req, res) => {
+    try {
+        await new Promise((resolve, reject) => {
+            upload(req, res, (err) => {
+                if (err) {
+                    console.error(err);
+                    reject(new Error('Error uploading image'));
+                } else {
+                    resolve();
+                }
+            });
+        });
+
+        // Upload the image to S3
+        const image = req.file;
+        const key = `images/${Date.now()}_${image.originalname}`;
         const params = {
-            Bucket: bucketName,
-            Key: `${Date.now().toString()}.jpg`,
-            Body: fileData,
+            Bucket: process.env.BUCKET_NAME,
+            Key: key,
+            Body: image.buffer,
             ACL: 'public-read'
         };
-        S3.upload(params, (err, data) => {
-            if (err) {
-                console.log(err);
-                return reject(err);
-            }
-            console.log(data);
-           // console.log(data.Location);
-            return resolve(data);
+        const s3Response = await s3.upload(params).promise();
+
+        // Return the S3 URL to the client
+        const url = s3Response.Location;
+        const chat = await Chats.create({
+            name: req.user.name,
+            message: url,
+            userId: req.user.id,
+            groupId: req.query.groupId
         });
-    });
+
+        res.status(201).send(chat);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(err.message);
+    }
 };
 
-
+module.exports = {
+    uploadImage,
+};

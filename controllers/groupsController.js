@@ -2,7 +2,8 @@ const Groups = require('../models/groupsModel')
 const Users = require('../models/usersModel')
 const { Op } = require("sequelize")
 
-//@desc: Load group list user is memberOf
+
+//@desc: Load group list user is memberOf to screen
 exports.findGroups = async (req, res) => {
     try {
         const groups = await Groups.findAll();
