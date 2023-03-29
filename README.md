@@ -1,6 +1,9 @@
 <h1>Group Chat Application</h1>
 This project is a web-based messaging platform that allows users to communicate in real-time. It uses a three-tier architecture, consisting of the client, server, and database. The client-side is implemented using HTML, CSS, and JavaScript, while the server-side is built using Node.js, Express, Socket.io, and Sequelize as the ORM. The database is a MySQL database.
 
+## Demo:
+![ProjectDemo](https://drive.google.com/file/d/1F4J2TbbakKk7sqhiUQIV95hAEybNNtV4/view?usp=share_link)
+
 ## Installation
 
 1.  Clone the repository
