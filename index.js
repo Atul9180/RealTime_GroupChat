@@ -8,7 +8,7 @@ const { setupSocketServer } = require('./util/socket');
 const { job } = require('./services/cronJob');
 const path = require('path');
 const helmet = require('helmet');
-app.use(helmet);
+app.use(helmet());
 
 
 
